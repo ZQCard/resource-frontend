@@ -28,3 +28,16 @@ export const saveErrorLogger = info => {
     method: 'post'
   })
 }
+
+export const getVideosList = (type, page, pageSize) => {
+  let params = {
+    type: type,
+    page: page,
+    pageSize: pageSize
+  }
+  return axios.request({
+    url: 'videos',
+    method: 'get',
+    params: params
+  })
+}

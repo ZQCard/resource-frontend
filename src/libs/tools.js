@@ -101,6 +101,17 @@ const getDate = (timeStamp, startType) => {
 }
 
 /**
+ *
+ * @param {time} time 格林威治时间
+ * @returns {string} yyyy-mm-dd hh:ii:ss格式的时间
+ */
+export const getNormalTime = time => {
+  var d = new Date(time)
+  var times = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+  return times
+}
+
+/**
  * @param {String|Number} timeStamp 时间戳
  * @returns {String} 相对时间字符串
  */

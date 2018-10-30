@@ -1,5 +1,4 @@
 import Main from '@/components/main'
-import parentView from '@/components/parent-view'
 
 /**
  * iview-admin中meta除了原生参数外可配置的参数:
@@ -46,53 +45,31 @@ export default [
     ]
   },
   {
-    path: '/multilevel',
-    name: 'multilevel',
+    path: '/videos',
+    name: '影视资源',
     meta: {
-      icon: 'md-menu',
-      title: '多级菜单'
+      icon: 'md-youtube',
+      title: '影视资源'
     },
     component: Main,
     children: [
       {
-        path: 'level_2_1',
-        name: 'level_2_1',
+        path: 'classic_movie',
+        name: '经典电影',
         meta: {
-          icon: 'md-funnel',
-          title: '二级-1'
+          icon: 'ios-film-outline',
+          title: '经典电影'
         },
-        component: () => import('@/view/multilevel/level-2-1.vue')
+        component: () => import('@/view/videos/classic_movie/list.vue')
       },
       {
-        path: 'level_2_2',
-        name: 'level_2_2',
+        path: 'anime_movie',
+        name: '动漫推荐',
         meta: {
-          access: ['super_admin'],
-          icon: 'md-funnel',
-          showAlways: true,
-          title: '二级-2'
+          icon: 'logo-octocat',
+          title: '动漫推荐'
         },
-        component: parentView,
-        children: [
-          {
-            path: 'level_2_2_1',
-            name: 'level_2_2_1',
-            meta: {
-              icon: 'md-funnel',
-              title: '三级'
-            },
-            component: () => import('@/view/multilevel/level-2-2/level-3-1.vue')
-          }
-        ]
-      },
-      {
-        path: 'level_2_3',
-        name: 'level_2_3',
-        meta: {
-          icon: 'md-funnel',
-          title: '二级-3'
-        },
-        component: () => import('@/view/multilevel/level-2-3.vue')
+        component: () => import('@/view/videos/anime_movie/list.vue')
       }
     ]
   },
