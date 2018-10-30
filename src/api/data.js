@@ -41,3 +41,11 @@ export const getVideosList = (type, page, pageSize) => {
     params: params
   })
 }
+
+export const postDataForm = (path, data) => {
+  return axios.request({
+    url: path,
+    data: data,
+    method: 'post'
+  })
+}
