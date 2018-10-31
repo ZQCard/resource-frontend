@@ -29,14 +29,17 @@ export const saveErrorLogger = info => {
   })
 }
 
-export const getVideosList = (type, page, pageSize) => {
-  let params = {
-    type: type,
-    page: page,
-    pageSize: pageSize
-  }
+export const getDataList = (path, params) => {
   return axios.request({
-    url: 'videos',
+    url: path,
+    method: 'get',
+    params: params
+  })
+}
+
+export const getDataView = (path, params) => {
+  return axios.request({
+    url: path,
     method: 'get',
     params: params
   })
@@ -47,5 +50,21 @@ export const postDataForm = (path, data) => {
     url: path,
     data: data,
     method: 'post'
+  })
+}
+
+export const putDataForm = (path, data) => {
+  return axios.request({
+    url: path,
+    data: data,
+    method: 'put'
+  })
+}
+
+export const deleteData = (path, params) => {
+  return axios.request({
+    url: path,
+    params: params,
+    method: 'delete'
   })
 }
