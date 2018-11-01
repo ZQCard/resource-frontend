@@ -167,7 +167,7 @@ export default {
       params.append('name', this.form.name)
       params.append('href', this.form.href)
       params.append('type', 'classic')
-      if (this.form.id) { // 添加
+      if (this.form.id === '') { // 添加
         postDataForm('video', params).then(res => {
           this.$Message.success({
             content: res.data.message,
