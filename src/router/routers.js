@@ -60,7 +60,7 @@ export default [
           icon: 'ios-film-outline',
           title: '经典电影'
         },
-        component: () => import('@/view/videos/classic_movie/list.vue')
+        component: () => import('@/view/videos/movie/list.vue')
       },
       {
         path: 'anime_movie',
@@ -69,7 +69,7 @@ export default [
           icon: 'logo-octocat',
           title: '动漫推荐'
         },
-        component: () => import('@/view/videos/anime_movie/list.vue')
+        component: () => import('@/view/videos/movie/list.1.vue')
       }
     ]
   },
