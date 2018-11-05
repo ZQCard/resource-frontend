@@ -1,5 +1,5 @@
 <template>
-    <div class="classic_moive">
+    <div :class="type">
       <div style="background:#eee;padding: 20px">
         <Card>
             <Button type="primary" style="margin-bottom: 20px;" @click="addMovie">添加电影</Button>
@@ -37,6 +37,8 @@ export default {
       page: 1,
       pagesizeopts: [5, 10, 15],
 
+      // 页面分类
+      type: 'classic',
       // 模态框
       formShow: false,
 
@@ -116,6 +118,9 @@ export default {
     }
   },
   created () {
+    let urlArray = location.href.split('/')
+    let urlPathArray = (urlArray[urlArray.length - 1]).split('_')
+    this.type = urlPathArray[0]
     this.getInitData()
   },
   methods: {
@@ -123,7 +128,7 @@ export default {
       let params = new URLSearchParams()
       params.append('page', this.page)
       params.append('pageSize', this.pageSize)
-      params.append('type', 'classic')
+      params.append('type', this.type)
       getDataList('videos', params).then(res => {
         // 数据处理
         for (let i = 0; i < res.data.list.length; i++) {
@@ -166,7 +171,7 @@ export default {
       let params = new URLSearchParams()
       params.append('name', this.form.name)
       params.append('href', this.form.href)
-      params.append('type', 'classic')
+      params.append('type', this.type)
       if (this.form.id === '') { // 添加
         postDataForm('video', params).then(res => {
           this.$Message.success({
