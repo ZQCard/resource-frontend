@@ -1,20 +1,19 @@
 import axios from '@/libs/api.request'
 
 export const login = ({ userName, password }) => {
-  const data = {
-    userName,
-    password
-  }
+  let params = new URLSearchParams()
+  params.append('username', userName)
+  params.append('password', password)
   return axios.request({
-    url: 'login',
-    data,
+    url: '/auth',
+    data: params,
     method: 'post'
   })
 }
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'get_info',
+    url: '/user',
     params: {
       token
     },

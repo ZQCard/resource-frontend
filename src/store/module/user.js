@@ -44,7 +44,7 @@ export default {
           commit('setToken', data.token)
           resolve()
         }).catch(err => {
-          reject(err)
+          alert(err.response.data.message)
         })
       })
     },
