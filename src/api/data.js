@@ -1,18 +1,5 @@
 import axios from '@/libs/api.request'
-
-export const getTableData = () => {
-  return axios.request({
-    url: 'get_table_data',
-    method: 'get'
-  })
-}
-
-export const getDragList = () => {
-  return axios.request({
-    url: 'get_drag_list',
-    method: 'get'
-  })
-}
+import { getToken } from '@/libs/util'
 
 export const errorReq = () => {
   return axios.request({
@@ -30,6 +17,7 @@ export const saveErrorLogger = info => {
 }
 
 export const getDataList = (path, params) => {
+  params.append('token', getToken())
   return axios.request({
     url: path,
     method: 'get',
@@ -38,6 +26,7 @@ export const getDataList = (path, params) => {
 }
 
 export const getDataView = (path, params) => {
+  params.append('token', getToken())
   return axios.request({
     url: path,
     method: 'get',
@@ -46,22 +35,29 @@ export const getDataView = (path, params) => {
 }
 
 export const postDataForm = (path, data) => {
+  let params = new URLSearchParams()
+  params.append('token', getToken())
   return axios.request({
     url: path,
     data: data,
-    method: 'post'
+    method: 'post',
+    params: params
   })
 }
 
 export const putDataForm = (path, data) => {
+  let params = new URLSearchParams()
+  params.append('token', getToken())
   return axios.request({
     url: path,
     data: data,
-    method: 'put'
+    method: 'put',
+    params: params
   })
 }
 
 export const deleteData = (path, params) => {
+  params.append('token', getToken())
   return axios.request({
     url: path,
     params: params,
