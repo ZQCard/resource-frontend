@@ -28,7 +28,8 @@
                       :action="uploadUrl"
                       :on-success="uploadSuccess"
                       :on-exceeded-size="uploadMax"
-                      name="image"
+                      name="file"
+                      multiple
                       :data="uploadData">
                   <div style="padding: 20px 0" @click="clearUploadedImage">
                       <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
@@ -42,18 +43,19 @@
           </FormItem>
       </Form>
       </Modal>
+      <Spin size="large" fix v-if="spinShow"/>
     </div>
 </template>
 <script>
 import {getDataList, postDataForm, getDataView, putDataForm, deleteData} from '@/api/data'
 import {getNormalTime} from '@/libs/tools'
-import { getToken } from '@/libs/util'
-import config from '@/config'
+import {config} from '@/config'
 export default {
   data () {
     return {
-      uploadData: {'type': 'image'},
-      uploadUrl: (process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro) + 'upload?token=' + getToken(),
+      spinShow: true,
+      uploadData: {},
+      uploadUrl: config.baseUrl.pro,
       // 分页数据
       totalCount: 0,
       pageSize: 10,
@@ -178,6 +180,7 @@ export default {
   },
   methods: {
     getInitData () {
+      this.spinShow = true
       let params = new URLSearchParams()
       params.append('page', this.page)
       params.append('pageSize', this.pageSize)
@@ -203,6 +206,7 @@ export default {
           })
         }
       })
+      this.spinShow = false
     },
     // 根据页码查看信息
     getPage (page) {
@@ -221,6 +225,25 @@ export default {
       this.form.href = ''
       this.form.poster = ''
       this.form.description = ''
+
+      // 获取七牛云token
+      let params = new URLSearchParams()
+      getDataView('/qiniu-token', params).then(res => {
+        this.uploadData = {type: 'image', token: res.data.token}
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
     },
     ok () {
       let params = new URLSearchParams()
@@ -337,14 +360,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      if (response.message !== undefined) {
-        this.$Message.error({
-          content: response.message,
-          duration: 3
-        })
-        return
-      }
-      this.form.poster = response.url
+      this.form.poster = config.baseUrl.pic + response.hash
     },
 
     // 文件超出限制时

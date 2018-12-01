@@ -5,7 +5,7 @@ export const login = ({ userName, password }) => {
   params.append('username', userName)
   params.append('password', password)
   return axios.request({
-    url: '/auth',
+    url: '/user_login',
     data: params,
     method: 'post'
   })
