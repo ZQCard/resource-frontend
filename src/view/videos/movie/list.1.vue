@@ -49,7 +49,7 @@
 <script>
 import {getDataList, postDataForm, getDataView, putDataForm, deleteData} from '@/api/data'
 import {getNormalTime} from '@/libs/tools'
-import {config} from '@/config'
+import config from '@/config'
 export default {
   data () {
     return {

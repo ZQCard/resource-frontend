@@ -1,13 +1,11 @@
 <template>
-    <div :class="type">
+    <div class="user_list">
       <div style="background:#eee;padding: 20px">
         <Card>
-            <Button type="primary" style="margin-bottom: 20px;" @click="addMovie">添加电影</Button>
+            <Button type="primary" style="margin-bottom: 20px;" @click="addUser">添加用户</Button>
         </Card>
       </div>
-      <Table :columns="columns1" :data="video_data"></Table>
-      <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
-      <!--添加模态框-->
+      <Table :columns="columns" :data="user_data"></Table>
       <Modal
         v-model="formShow"
         :title="formTitle"
@@ -15,13 +13,13 @@
         @on-cancel="cancel">
         <Form :model="form" :label-width="80">
           <input type="hidden" name="id" v-model="form.id"/>
-          <FormItem label="名称">
-              <Input type="text" v-model="form.name"/>
+          <FormItem label="用户名">
+              <Input type="text" v-model="form.username"/>
           </FormItem>
-          <FormItem label="链接地址">
-              <Input type="text" v-model="form.href"/>
+          <FormItem label="密码">
+              <Input type="text" v-model="form.password"/>
           </FormItem>
-          <FormItem label="封面图">
+          <FormItem label="头像">
             <Upload
                       ref="upload"
                       type="drag"
@@ -38,11 +36,9 @@
               </Upload>
             <img v-if="form.poster" :src="form.poster" width="30%" height="30%">
           </FormItem>
-          <FormItem label="简介">
-              <Input v-model="form.description" type="textarea" placeholder="输入电影简介" />
-          </FormItem>
       </Form>
       </Modal>
+      <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
       <Spin size="large" fix v-if="spinShow"/>
     </div>
 </template>
@@ -53,17 +49,12 @@ import config from '@/config'
 export default {
   data () {
     return {
-      spinShow: true,
-      uploadData: {},
-      uploadUrl: config.baseUrl.pro,
+      spinShow: false,
       // 分页数据
       totalCount: 0,
       pageSize: 10,
       page: 1,
       pagesizeopts: [5, 10, 15],
-
-      // 页面分类
-      type: 'classic',
       // 模态框
       formShow: false,
 
@@ -71,26 +62,25 @@ export default {
       formTitle: '',
       form: {
         id: '',
-        name: '',
-        href: '',
-        poster: '',
-        description: ''
+        username: '',
+        password: '',
+        avatar: ''
       },
       // 表格列
-      columns1: [
+      columns: [
         {
           title: 'Id',
           key: 'id',
           align: 'center'
         },
         {
-          title: '名称',
-          key: 'name',
+          title: '用户名',
+          key: 'username',
           align: 'center'
         },
         {
-          title: '封面图地址',
-          key: 'poster',
+          title: '头像',
+          key: 'avatar',
           align: 'center',
           render: (h, params) => {
             return h('div', {
@@ -100,7 +90,7 @@ export default {
             }, [
               h('img', {
                 attrs: {
-                  'src': params.row.poster,
+                  'src': params.row.avatar,
                   'height': '50',
                   'width': '100'
                 },
@@ -110,11 +100,6 @@ export default {
               })
             ])
           }
-        },
-        {
-          title: '链接地址',
-          key: 'href',
-          align: 'center'
         },
         {
           title: '创建时间',
@@ -168,14 +153,11 @@ export default {
           }
         }
       ],
-      video_data: [
+      user_data: [
       ]
     }
   },
   created () {
-    let urlArray = location.href.split('/')
-    let urlPathArray = (urlArray[urlArray.length - 1]).split('_')
-    this.type = urlPathArray[0]
     this.getInitData()
   },
   methods: {
@@ -184,13 +166,12 @@ export default {
       let params = new URLSearchParams()
       params.append('page', this.page)
       params.append('pageSize', this.pageSize)
-      params.append('type', this.type)
-      getDataList('videos', params).then(res => {
+      getDataList('users', params).then(res => {
         // 数据处理
         for (let i = 0; i < res.data.list.length; i++) {
           res.data.list[i].created_at = getNormalTime(res.data.list[i].created_at)
         }
-        this.video_data = res.data.list
+        this.user_data = res.data.list
         this.totalCount = res.data.totalCount
       }).catch(err => {
         // 错误处理
@@ -245,15 +226,13 @@ export default {
         }
       })
     },
-    ok () {
+    addUser () {
       let params = new URLSearchParams()
       params.append('name', this.form.name)
-      params.append('href', this.form.href)
-      params.append('type', this.type)
-      params.append('poster', this.form.poster)
-      params.append('description', this.form.description)
+      params.append('password', this.form.password)
+      params.append('avatar', this.form.description)
       if (this.form.id === '') { // 添加
-        postDataForm('video', params).then(res => {
+        postDataForm('user', params).then(res => {
           this.$Message.success({
             content: res.data.message,
             duration: 3,
@@ -277,7 +256,7 @@ export default {
         })
       } else { // 编辑
         params.append('id', this.form.id)
-        putDataForm('video', params).then(res => {
+        putDataForm('user', params).then(res => {
           this.$Message.success({
             content: res.data.message,
             duration: 3,
@@ -304,38 +283,11 @@ export default {
     cancel () {
       this.$Message.info('已取消')
     },
-    viewInfo (row) {
-      // 请求查看详情
-      this.formTitle = '编辑电影表单'
-      let params = new URLSearchParams()
-      params.append('id', row.id)
-      getDataView('video', params).then(res => {
-        this.form.id = res.data.info.id
-        this.form.name = res.data.info.name
-        this.form.href = res.data.info.href
-        this.form.poster = res.data.info.poster
-        this.form.description = res.data.info.description
-        this.formShow = true
-      }).catch(err => {
-        // 错误处理
-        if (err.response.data.message) {
-          this.$Message.error({
-            content: err.response.data.message,
-            duration: 3
-          })
-        } else {
-          this.$Message.error({
-            content: err.response.data,
-            duration: 3
-          })
-        }
-      })
-    },
     Delete (row) {
       // 删除记录
       let params = new URLSearchParams()
       params.append('id', row.id)
-      deleteData('video', params).then(res => {
+      deleteData('user', params).then(res => {
         this.$Message.success({
           content: res.data.message,
           duration: 3,

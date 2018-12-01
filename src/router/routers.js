@@ -45,6 +45,35 @@ export default [
     ]
   },
   {
+    path: '/user/center',
+    name: '用户中心',
+    meta: {
+      icon: 'md-youtube',
+      title: '用户中心'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'center',
+        name: '用户列表',
+        meta: {
+          icon: 'ios-film-outline',
+          title: '用户列表'
+        },
+        component: () => import('@/view/user/list.vue')
+      },
+      {
+        path: 'center',
+        name: '用户信息',
+        meta: {
+          icon: 'ios-film-outline',
+          title: '用户信息'
+        },
+        component: () => import('@/view/user/list.vue')
+      }
+    ]
+  },
+  {
     path: '/videos',
     name: '影视资源',
     meta: {
