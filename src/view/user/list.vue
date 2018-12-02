@@ -46,8 +46,8 @@
         @on-cancel="cancel">
         <Form :model="assignmentForm" :label-width="80">
           <input type="hidden" name="id" v-model="assignmentForm.id"/>
-          <Checkbox v-for="(item,key) in assignmentForm.roles" :key="key" :label="item.value" >
-            <span>{{item.label}}</span>
+          <Checkbox v-for="(item,key) in assignmentForm.roles" :key="key" true-value :label="item" >
+            <span>{{item}}</span>
           </Checkbox>
       </Form>
       </Modal>
@@ -454,10 +454,6 @@ export default {
       getDataView('assignment', params).then(res => {
         this.assignmentForm.id = user.id
         this.assignmentForm.roles = res.data.roles
-        // {label:"超级管理员", role:"超级管理员"}
-        for (let i = 0; i < res.data.roles.length; i++) {
-          this.roles.push({label: res.data.roles[i], value: res.data.roles[i]})
-        }
       }).catch(err => {
         // 错误处理
         if (err.response.data.message) {
