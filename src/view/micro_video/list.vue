@@ -1,65 +1,200 @@
 <template>
     <div class="micro_video">
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
-        <Col span="4">
-            <Card>
-                <p slot="title">The standard card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-                <p>Content of card</p>
-            </Card>
-        </Col>
+        <div><Button type="primary" style="margin-bottom: 20px;" @click="addVideo">添加微视频</Button></div>
+        <Row>
+            <div span="4" v-for="(video, index) in video_list" :key="index">
+                <Card>
+                    <span @click="deleteVideo(video.url)"><Icon type="md-close" style="float:right;"/></span>
+                    <video :src="video.url" controls="controls" width="240" height="320" @play="viewVideo(video.url)"></video>
+                    <span style="float:right;"><Icon type="ios-eye-outline" />{{video.view}}</span>
+                </Card>
+            </div>
+        </Row>
+        <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
+        <Spin size="large" fix v-if="spinShow"/>
+
+        <Modal
+        v-model="formShow"
+        title="上传短视频"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <Form  :label-width="80">
+          <FormItem label="短视频">
+            <Upload
+                      ref="upload"
+                      type="drag"
+                      :action="uploadUrl"
+                      :on-success="uploadSuccess"
+                      :on-exceeded-size="uploadMax"
+                      name="file"
+                      multiple
+                      :data="uploadData">
+                  <div style="padding: 20px 0" @click="clearUploadedImage">
+                      <Icon type="md-eye" />
+                      <p>点击或者着拽上传文件</p>
+                  </div>
+              </Upload>
+            <video v-if="video_url" :src="video_url" width="30%" height="30%" controls="controls"></video>
+          </FormItem>
+      </Form>
+      </Modal>
     </div>
+
 </template>
 <script>
+import {getDataList, postDataForm, getDataView, deleteData} from '@/api/data'
+import config from '@/config'
 export default {
+  data () {
+    return {
+      video_url: '',
+      spinShow: false,
+      formShow: false,
+      // 分页数据
+      totalCount: 0,
+      pageSize: 10,
+      page: 1,
+      pagesizeopts: [5, 10, 15],
+      uploadUrl: config.baseUrl.qiniuUpload,
+      uploadData: {},
+      video_list: []
+    }
+  },
+  created () {
+    this.getInitData()
+  },
+  methods: {
+    getInitData () {
+      this.spinShow = true
+      let params = new URLSearchParams()
+      params.append('page', this.page)
+      params.append('pageSize', this.pageSize)
+      getDataList('micro_videos', params).then(res => {
+        this.video_list = res.data.list
+        this.totalCount = res.data.totalCount
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+      this.spinShow = false
+    },
+    // 根据页码查看信息
+    getPage (page) {
+      this.page = page
+      this.getInitData()
+    },
+    Pages (pageSize) {
+      this.pageSize = pageSize
+      this.getInitData()
+    },
+    // 文件上传成功回调
+    uploadSuccess (response) {
+      this.video_url = config.baseUrl.qiniuURL + response.hash
+    },
 
+    // 文件超出限制时
+    uploadMax (file) {
+      this.$Message.error({
+        content: '超出文件大小限制文件 ' + file.name + ' 太大，不能超过 5M。',
+        duration: 5
+      })
+      return false
+    },
+    clearUploadedImage () {
+      this.$refs.upload.clearFiles()
+    },
+    ok () {
+      let params = new URLSearchParams()
+      params.append('url', this.video_url)
+      postDataForm('micro_video', params).then(res => {
+        this.$Message.success({
+          content: res.data.message,
+          duration: 3,
+          onClose: function () {
+            window.location.reload()
+          }
+        })
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+    },
+    cancel () {
+      this.$Message.info('已取消')
+    },
+    addVideo () {
+      // 获取七牛云token
+      let params = new URLSearchParams()
+      getDataView('/qiniu-token', params).then(res => {
+        this.uploadData = {type: 'video', token: res.data.token}
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+      this.formShow = true
+    },
+    // 增加播放次数
+    viewVideo (url) {
+      let params = new URLSearchParams()
+      params.append('url', url)
+      getDataView('/micro_video', params)
+    },
+    deleteVideo (url) {
+      let params = new URLSearchParams()
+      params.append('url', url)
+      deleteData('/micro_video', params).then(res => {
+        this.$Message.success({
+          content: res.data.message,
+          duration: 3,
+          onClose: function () {
+            window.location.reload()
+          }
+        })
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+    }
+  }
 }
 </script>
