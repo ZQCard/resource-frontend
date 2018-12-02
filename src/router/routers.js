@@ -68,7 +68,7 @@ export default [
     path: '/micro_video',
     name: '短视频',
     meta: {
-      icon: 'md-youtube',
+      icon: 'ios-videocam-outline',
       title: '短视频'
     },
     component: Main,
@@ -77,7 +77,7 @@ export default [
         path: 'center',
         name: '视频列表',
         meta: {
-          icon: 'md-contacts',
+          icon: 'ios-videocam-outline',
           title: '短视频列表'
         },
         component: () => import('@/view/micro_video/list.vue')
@@ -110,6 +110,26 @@ export default [
           title: '动漫推荐'
         },
         component: () => import('@/view/videos/movie/list.1.vue')
+      }
+    ]
+  },
+  {
+    path: '/personal',
+    name: '非礼勿入',
+    meta: {
+      icon: 'logo-freebsd-devil',
+      title: '非礼勿入'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'assignment',
+        name: '角色授权',
+        meta: {
+          icon: 'ios-person',
+          title: '角色授权'
+        },
+        component: () => import('@/view/personal/auth/assignment.vue')
       }
     ]
   },

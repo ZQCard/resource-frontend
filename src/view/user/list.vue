@@ -38,6 +38,19 @@
           </FormItem>
       </Form>
       </Modal>
+
+      <Modal
+        v-model="assignmentFormShow"
+        title="角色授予"
+        @on-ok="assignment_ok"
+        @on-cancel="cancel">
+        <Form :model="assignmentForm" :label-width="80">
+          <input type="hidden" name="id" v-model="assignmentForm.id"/>
+          <Checkbox v-for="(item,key) in assignmentForm.roles" :key="key" :label="item.value" >
+            <span>{{item.label}}</span>
+          </Checkbox>
+      </Form>
+      </Modal>
       <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
       <Spin size="large" fix v-if="spinShow"/>
     </div>
@@ -59,7 +72,7 @@ export default {
       uploadData: {},
       // 模态框
       formShow: false,
-
+      assignmentFormShow: false,
       // 数据表单
       formTitle: '',
       form: {
@@ -122,6 +135,17 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
+                  type: 'warning',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.assignment(params.row)
+                  }
+                }
+              }, '授权'),
+              h('Button', {
+                props: {
                   type: 'primary',
                   size: 'small'
                 },
@@ -171,7 +195,12 @@ export default {
         }
       ],
       user_data: [
-      ]
+      ],
+      assignmentForm: {
+        id: '',
+        roles: [
+        ]
+      }
     }
   },
   created () {
@@ -416,6 +445,37 @@ export default {
     },
     clearUploadedImage () {
       this.$refs.upload.clearFiles()
+    },
+    assignment (user) {
+      this.assignmentFormShow = true
+      // 请求授权情况
+      let params = new URLSearchParams()
+      params.append('id', user.id)
+      getDataView('assignment', params).then(res => {
+        this.assignmentForm.id = user.id
+        this.assignmentForm.roles = res.data.roles
+        // {label:"超级管理员", role:"超级管理员"}
+        for (let i = 0; i < res.data.roles.length; i++) {
+          this.roles.push({label: res.data.roles[i], value: res.data.roles[i]})
+        }
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+      this.formShow = false
+    },
+    assignment_ok () {
+
     }
   }
 }
