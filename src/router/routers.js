@@ -57,19 +57,30 @@ export default [
         path: 'center',
         name: '用户列表',
         meta: {
-          icon: 'ios-film-outline',
+          icon: 'md-contacts',
           title: '用户列表'
         },
         component: () => import('@/view/user/list.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/micro_video',
+    name: '短视频',
+    meta: {
+      icon: 'md-youtube',
+      title: '短视频'
+    },
+    component: Main,
+    children: [
       {
         path: 'center',
-        name: '用户信息',
+        name: '视频列表',
         meta: {
-          icon: 'ios-film-outline',
-          title: '用户信息'
+          icon: 'md-contacts',
+          title: '短视频列表'
         },
-        component: () => import('@/view/user/list.vue')
+        component: () => import('@/view/micro_video/list.vue')
       }
     ]
   },
