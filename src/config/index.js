@@ -15,7 +15,8 @@ export default {
   baseUrl: {
     dev: 'http://127.0.0.1:8888/',
     pro: '//up-z0.qiniup.com/',
-    pic: 'http://resource.niu12.com/'
+    qiniuURL: 'http://resource.niu12.com/',
+    qiniuUpload: '//up-z0.qiniup.com/'
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home

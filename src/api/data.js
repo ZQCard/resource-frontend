@@ -64,3 +64,12 @@ export const deleteData = (path, params) => {
     method: 'delete'
   })
 }
+
+export const recoverData = (path, params) => {
+  params.append('token', getToken())
+  return axios.request({
+    url: path,
+    method: 'patch',
+    params: params
+  })
+}

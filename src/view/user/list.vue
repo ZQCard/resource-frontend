@@ -34,7 +34,7 @@
                       <p>点击或者着拽上传文件</p>
                   </div>
               </Upload>
-            <img v-if="form.poster" :src="form.poster" width="30%" height="30%">
+            <img v-if="form.avatar" :src="form.avatar" width="30%" height="30%">
           </FormItem>
       </Form>
       </Modal>
@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import {getDataList, postDataForm, getDataView, putDataForm, deleteData} from '@/api/data'
+import {getDataList, postDataForm, getDataView, putDataForm, deleteData, recoverData} from '@/api/data'
 import {getNormalTime} from '@/libs/tools'
 import config from '@/config'
 export default {
@@ -55,6 +55,8 @@ export default {
       pageSize: 10,
       page: 1,
       pagesizeopts: [5, 10, 15],
+      uploadUrl: config.baseUrl.qiniuUpload,
+      uploadData: {},
       // 模态框
       formShow: false,
 
@@ -102,6 +104,11 @@ export default {
           }
         },
         {
+          title: '删除时间',
+          key: 'deleted_at',
+          align: 'center'
+        },
+        {
           title: '创建时间',
           key: 'created_at',
           align: 'center'
@@ -109,7 +116,6 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 125,
           fixed: 'right',
           align: 'center',
           render: (h, params) => {
@@ -125,6 +131,17 @@ export default {
                   }
                 }
               }, '编辑'),
+              h('Button', {
+                props: {
+                  type: 'success',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.recover(params.row)
+                  }
+                }
+              }, '恢复'),
               h('Poptip', {
                 props: {
                   confirm: true,
@@ -170,6 +187,9 @@ export default {
         // 数据处理
         for (let i = 0; i < res.data.list.length; i++) {
           res.data.list[i].created_at = getNormalTime(res.data.list[i].created_at)
+          if (res.data.list[i].deleted_at != null) {
+            res.data.list[i].deleted_at = getNormalTime(res.data.list[i].deleted_at)
+          }
         }
         this.user_data = res.data.list
         this.totalCount = res.data.totalCount
@@ -198,14 +218,13 @@ export default {
       this.pageSize = pageSize
       this.getInitData()
     },
-    addMovie () {
+    addUser () {
       this.formShow = true
-      this.formTitle = '添加电影表单'
-      this.form.name = ''
+      this.formTitle = '添加用户'
+      this.form.username = ''
+      this.form.password = ''
       this.form.id = ''
-      this.form.href = ''
-      this.form.poster = ''
-      this.form.description = ''
+      this.form.avatar = ''
 
       // 获取七牛云token
       let params = new URLSearchParams()
@@ -226,11 +245,11 @@ export default {
         }
       })
     },
-    addUser () {
+    ok () {
       let params = new URLSearchParams()
-      params.append('name', this.form.name)
+      params.append('username', this.form.username)
       params.append('password', this.form.password)
-      params.append('avatar', this.form.description)
+      params.append('avatar', this.form.avatar)
       if (this.form.id === '') { // 添加
         postDataForm('user', params).then(res => {
           this.$Message.success({
@@ -283,6 +302,51 @@ export default {
     cancel () {
       this.$Message.info('已取消')
     },
+    viewInfo (row) {
+      // 获取七牛云token
+      let params = new URLSearchParams()
+      getDataView('/qiniu-token', params).then(res => {
+        this.uploadData = {type: 'image', token: res.data.token}
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+
+      this.formShow = true
+      // 请求查看详情
+      this.formTitle = '编辑用户信息'
+      params = new URLSearchParams()
+      params.append('id', row.id)
+      getDataView('user', params).then(res => {
+        let data = res.data.user
+        this.form.id = data.id
+        this.form.username = data.username
+        this.form.avatar = data.avatar
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+    },
     Delete (row) {
       // 删除记录
       let params = new URLSearchParams()
@@ -310,9 +374,36 @@ export default {
         }
       })
     },
+    recover (row) {
+    // 恢复记录
+      let params = new URLSearchParams()
+      params.append('id', row.id)
+      recoverData('/user/recover', params).then(res => {
+        this.$Message.success({
+          content: res.data.message,
+          duration: 3,
+          onClose: function () {
+            window.location.reload()
+          }
+        })
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
+    },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.form.poster = config.baseUrl.pic + response.hash
+      this.form.avatar = config.baseUrl.qiniuURL + response.hash
     },
 
     // 文件超出限制时

@@ -55,7 +55,7 @@ export default {
     return {
       spinShow: true,
       uploadData: {},
-      uploadUrl: config.baseUrl.pro,
+      uploadUrl: config.baseUrl.qiniuUpload,
       // 分页数据
       totalCount: 0,
       pageSize: 10,
@@ -360,7 +360,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.form.poster = config.baseUrl.pic + response.hash
+      this.form.poster = config.baseUrl.qiniuURL + response.hash
     },
 
     // 文件超出限制时
