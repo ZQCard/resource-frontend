@@ -128,6 +128,15 @@ export default [
           title: '白云苍狗'
         },
         component: () => import('@/view/personal/photo/list.vue')
+      },
+      {
+        path: 'bills',
+        name: '跬步千里',
+        meta: {
+          icon: 'md-home',
+          title: '跬步千里'
+        },
+        component: () => import('@/view/personal/bill/list.vue')
       }
     ]
   },
