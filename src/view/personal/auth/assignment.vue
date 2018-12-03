@@ -123,7 +123,6 @@ export default {
         // 处理路由列表
         this.routesInit = this.processArrayToTrsanfer(res.data.routes)
         this.routes = this.processArrayToTrsanfer(res.data.routes)
-        console.log(this.routes)
 
         // 角色路由列表
         this.roleRoutes = res.data.roleRoutes
@@ -209,7 +208,6 @@ export default {
     },
     handleChange1 (newTargetKeys, direction, moveKeys) {
       this.routesHas = newTargetKeys
-      console.log(this.routesHas)
     },
     viewInfo (role) {
       this.modelShow = true

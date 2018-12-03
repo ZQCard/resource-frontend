@@ -119,6 +119,15 @@ export default [
           title: '角色授权'
         },
         component: () => import('@/view/personal/auth/assignment.vue')
+      },
+      {
+        path: 'photos',
+        name: '白云苍狗',
+        meta: {
+          icon: 'md-photos',
+          title: '白云苍狗'
+        },
+        component: () => import('@/view/personal/photo/list.vue')
       }
     ]
   },

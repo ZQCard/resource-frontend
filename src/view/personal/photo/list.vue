@@ -1,12 +1,13 @@
 <template>
-    <div class="micro_video">
-        <div><Button type="primary" style="margin-bottom: 20px;" @click="addVideo">添加微视频</Button></div>
+    <div class="photos">
+        <div><Button type="primary" style="margin-bottom: 20px;" @click="addPhoto">添加照片</Button></div>
         <Row>
-            <Col span="4" v-for="(video, index) in video_list" :key="index">
-                <Card>
-                    <span @click="deleteVideo(video.url)"><Icon type="md-close" style="float:right;"/></span>
-                    <video :src="video.url" controls="controls" width="240" height="320" @play="viewVideo(video.url)"></video>
-                    <span style="float:right;"><Icon type="ios-eye-outline" />{{video.view}}</span>
+            <Col span="4" offset="1" v-for="(photo, index) in photo_list" :key="index">
+                <Card style="width:320px">
+                    <div style="text-align:center">
+                        <img :src="photo.url" width="260" height="300">
+                        <h3>{{photo.description}}</h3>
+                    </div>
                 </Card>
             </Col>
         </Row>
@@ -15,11 +16,11 @@
 
         <Modal
         v-model="formShow"
-        title="上传短视频"
+        title="上传照片"
         @on-ok="ok"
         @on-cancel="cancel">
         <Form  :label-width="80">
-          <FormItem label="短视频">
+          <FormItem label="照片">
             <Upload
                       ref="upload"
                       type="drag"
@@ -34,7 +35,10 @@
                       <p>点击或者着拽上传文件</p>
                   </div>
               </Upload>
-            <video v-if="video_url" :src="video_url" width="30%" height="30%" controls="controls"></video>
+            <img v-if="photo_url" :src="photo_url" width="30%" height="30%">
+          </FormItem>
+          <FormItem label="描述">
+              <Input v-model="description" type="textarea" placeholder="输入描述" />
           </FormItem>
       </Form>
       </Modal>
@@ -42,12 +46,13 @@
 
 </template>
 <script>
-import {getDataList, postDataForm, getDataView, deleteData} from '@/api/data'
+import {getDataList, postDataForm, getDataView} from '@/api/data'
 import config from '@/config'
 export default {
   data () {
     return {
-      video_url: '',
+      description: '',
+      photo_url: '',
       spinShow: false,
       formShow: false,
       // 分页数据
@@ -57,7 +62,7 @@ export default {
       pagesizeopts: [5, 10, 15],
       uploadUrl: config.baseUrl.qiniuUpload,
       uploadData: {},
-      video_list: []
+      photo_list: []
     }
   },
   created () {
@@ -69,8 +74,8 @@ export default {
       let params = new URLSearchParams()
       params.append('page', this.page)
       params.append('pageSize', this.pageSize)
-      getDataList('micro_videos', params).then(res => {
-        this.video_list = res.data.list
+      getDataList('personal/photos', params).then(res => {
+        this.photo_list = res.data.list
         this.totalCount = res.data.totalCount
       }).catch(err => {
         // 错误处理
@@ -99,7 +104,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.video_url = config.baseUrl.qiniuURL + response.hash
+      this.photo_url = config.baseUrl.qiniuURL + response.hash
     },
 
     // 文件超出限制时
@@ -115,8 +120,9 @@ export default {
     },
     ok () {
       let params = new URLSearchParams()
-      params.append('url', this.video_url)
-      postDataForm('micro_video', params).then(res => {
+      params.append('url', this.photo_url)
+      params.append('description', this.description)
+      postDataForm('personal/photo', params).then(res => {
         this.$Message.success({
           content: res.data.message,
           duration: 3,
@@ -142,7 +148,7 @@ export default {
     cancel () {
       this.$Message.info('已取消')
     },
-    addVideo () {
+    addPhoto () {
       // 获取七牛云token
       let params = new URLSearchParams()
       getDataView('/qiniu-token', params).then(res => {
@@ -167,33 +173,6 @@ export default {
     viewVideo (url) {
       let params = new URLSearchParams()
       params.append('url', url)
-      getDataView('/micro_video', params)
-    },
-    deleteVideo (url) {
-      let params = new URLSearchParams()
-      params.append('url', url)
-      deleteData('/micro_video', params).then(res => {
-        this.$Message.success({
-          content: res.data.message,
-          duration: 3,
-          onClose: function () {
-            window.location.reload()
-          }
-        })
-      }).catch(err => {
-        // 错误处理
-        if (err.response.data.message) {
-          this.$Message.error({
-            content: err.response.data.message,
-            duration: 3
-          })
-        } else {
-          this.$Message.error({
-            content: err.response.data,
-            duration: 3
-          })
-        }
-      })
     }
   }
 }
