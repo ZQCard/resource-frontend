@@ -187,6 +187,7 @@ export default {
     addBill () {
       this.formShow = true
       this.formTitle = '添加账单'
+      this.form.id = ''
       this.form.type = ''
       this.form.money = ''
       this.form.category = ''
@@ -262,7 +263,6 @@ export default {
         this.form.category = res.data.info.category
         this.form.money = res.data.info.money
         this.form.date = res.data.info.year + '-' + res.data.info.month + '-' + res.data.info.day
-        console.log(this.form.type)
         this.formShow = true
       }).catch(err => {
         // 错误处理

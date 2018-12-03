@@ -137,6 +137,15 @@ export default [
           title: '跬步千里'
         },
         component: () => import('@/view/personal/bill/list.vue')
+      },
+      {
+        path: 'diary',
+        name: '周二狗子',
+        meta: {
+          icon: 'md-walk',
+          title: '周二狗子'
+        },
+        component: () => import('@/view/personal/diary/list.vue')
       }
     ]
   },
