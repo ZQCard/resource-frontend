@@ -45,26 +45,6 @@ export default [
     ]
   },
   {
-    path: '/user/center',
-    name: '用户中心',
-    meta: {
-      icon: 'md-youtube',
-      title: '用户中心'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'center',
-        name: '用户列表',
-        meta: {
-          icon: 'md-contacts',
-          title: '用户列表'
-        },
-        component: () => import('@/view/user/list.vue')
-      }
-    ]
-  },
-  {
     path: '/micro_video',
     name: '短视频',
     meta: {
@@ -78,7 +58,7 @@ export default [
         name: '视频列表',
         meta: {
           icon: 'ios-videocam-outline',
-          title: '短视频列表'
+          title: '短视频'
         },
         component: () => import('@/view/micro_video/list.vue')
       }
@@ -122,6 +102,15 @@ export default [
     },
     component: Main,
     children: [
+      {
+        path: 'center',
+        name: '用户列表',
+        meta: {
+          icon: 'md-contacts',
+          title: '用户列表'
+        },
+        component: () => import('@/view/personal/user/list.vue')
+      },
       {
         path: 'assignment',
         name: '角色授权',

@@ -46,9 +46,11 @@
         @on-cancel="cancel">
         <Form :model="assignmentForm" :label-width="80">
           <input type="hidden" name="id" v-model="assignmentForm.id"/>
-          <Checkbox v-for="(item,key) in assignmentForm.roles" :key="key" true-value :label="item" >
-            <span>{{item}}</span>
-          </Checkbox>
+          <CheckboxGroup v-model="assignmentForm.roleHas">
+            <Checkbox v-for="(item,key) in assignmentForm.roles" :key="key" true-value :label="item" >
+              <span>{{item}}</span>
+            </Checkbox>
+          </CheckboxGroup>
       </Form>
       </Modal>
       <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
@@ -199,7 +201,8 @@ export default {
       assignmentForm: {
         id: '',
         roles: [
-        ]
+        ],
+        roleHas:[],
       }
     }
   },
@@ -451,9 +454,11 @@ export default {
       // 请求授权情况
       let params = new URLSearchParams()
       params.append('id', user.id)
+      this.assignmentForm.id = user.id
       getDataView('assignment', params).then(res => {
         this.assignmentForm.id = user.id
         this.assignmentForm.roles = res.data.roles
+        this.assignmentForm.roleHas = res.data.userRoles.has
       }).catch(err => {
         // 错误处理
         if (err.response.data.message) {
@@ -471,7 +476,31 @@ export default {
       this.formShow = false
     },
     assignment_ok () {
-
+      let params = new URLSearchParams()
+      params.append('id', this.assignmentForm.id)
+      params.append('roles', this.assignmentForm.roleHas)
+      postDataForm('assign', params).then(res => {
+          this.$Message.success({
+            content: res.data.message,
+            duration: 3,
+            onClose: function () {
+              window.location.reload()
+            }
+          })
+        }).catch(err => {
+          // 错误处理
+          if (err.response.data.message) {
+            this.$Message.error({
+              content: err.response.data.message,
+              duration: 3
+            })
+          } else {
+            this.$Message.error({
+              content: err.response.data,
+              duration: 3
+            })
+          }
+        })
     }
   }
 }
