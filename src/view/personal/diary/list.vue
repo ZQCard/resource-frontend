@@ -8,6 +8,13 @@
       <Table :columns="columns1" :data="diary_data"></Table>
       <Page :page-size-opts="pagesizeopts" :page-size="pageSize" :total="totalCount" :current="page" @on-change="getPage" @on-page-size-change="Pages" class="page-nav" show-sizer show-elevator show-total></Page>
       <Spin size="large" fix v-if="spinShow"/>
+      <Modal
+        title="请输入密码"
+        v-model="formShow"
+        @on-ok="ok"
+        >
+              <Input v-model="secret" type="text" placeholder="请输入密码" />
+    </Modal>
     </div>
 </template>
 <script>
@@ -17,6 +24,9 @@ export default {
   data () {
     return {
       spinShow: true,
+      secret: '',
+      id: '',
+      formShow: false,
       // 分页数据
       totalCount: 0,
       pageSize: 10,
@@ -132,6 +142,18 @@ export default {
       this.getInitData()
     },
     viewInfo (row) {
+      this.formShow = true
+      this.id = row.id
+    },
+    ok () {
+      if (this.secret === '') {
+        this.$Message.error({
+          content: '密码不得为空',
+          duration: 3
+        })
+        return
+      }
+      this.$router.push({name: 'create_diary', params: {id: this.id, secret: this.secret}})
     },
     Delete (row) {
       // 删除记录
@@ -161,7 +183,7 @@ export default {
       })
     },
     add_diary () {
-      alert(1)
+      this.$router.push({path: '/personal/diary/create'})
     }
   }
 }

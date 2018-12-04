@@ -146,6 +146,17 @@ export default [
           title: '周二狗子'
         },
         component: () => import('@/view/personal/diary/list.vue')
+      },
+      {
+        path: '/personal/diary/create',
+        name: 'create_diary',
+        meta: {
+          hideInMenu: true,
+          title: '日记',
+          notCache: true,
+          icon: 'md-bookmarks'
+        },
+        component: () => import('@/view/personal/diary/create_and_edit.vue')
       }
     ]
   },

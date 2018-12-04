@@ -259,7 +259,7 @@ export default {
       params.append('id', row.id)
       getDataView('personal/bill', params).then(res => {
         this.form.id = res.data.info.id
-        this.form.type = res.data.info.type
+        this.form.type = res.data.info.type + ''
         this.form.category = res.data.info.category
         this.form.money = res.data.info.money
         this.form.date = res.data.info.year + '-' + res.data.info.month + '-' + res.data.info.day
