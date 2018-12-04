@@ -52,6 +52,17 @@ export default [
           icon: 'md-people'
         },
         component: () => import('@/view/personal/user/view.vue')
+      },
+      {
+        path: '/user_apply',
+        name: 'user_apply',
+        meta: {
+          hideInMenu: true,
+          title: '申请用户',
+          notCache: true,
+          icon: 'md-people'
+        },
+        component: () => import('@/view/personal/user/apply.vue')
       }
     ]
   },
