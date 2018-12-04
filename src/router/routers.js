@@ -41,6 +41,17 @@ export default [
           icon: 'md-home'
         },
         component: () => import('@/view/single-page/home')
+      },
+      {
+        path: '/user_center',
+        name: 'user_center',
+        meta: {
+          hideInMenu: true,
+          title: '用户信息',
+          notCache: true,
+          icon: 'md-people'
+        },
+        component: () => import('@/view/personal/user/view.vue')
       }
     ]
   },
