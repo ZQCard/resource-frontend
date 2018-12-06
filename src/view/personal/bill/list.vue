@@ -3,7 +3,7 @@
       <div style="background:#eee;padding: 20px">
         <Card>
             <Button type="primary" style="margin: 20px;" @click="addBill">添加账单</Button>
-            <Button type="error" style="margin: 20px;" @click="addBill">查看统计图</Button>
+            <Button type="error" style="margin: 20px;" @click="statistics">查看统计图</Button>
         </Card>
       </div>
       <Table :columns="columns1" :data="bill_data"></Table>
@@ -305,6 +305,9 @@ export default {
           })
         }
       })
+    },
+    statistics () {
+      this.$router.push({name: 'statistics'})
     }
   }
 }

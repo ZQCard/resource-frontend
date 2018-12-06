@@ -28,13 +28,6 @@ export default {
           }
         }
       },
-      grid: {
-        top: '3%',
-        left: '1.2%',
-        right: '1%',
-        bottom: '3%',
-        containLabel: true
-      },
       xAxis: [
         {
           type: 'category',
@@ -48,33 +41,6 @@ export default {
         }
       ],
       series: [
-        {
-          name: '运营商/网络服务',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {normal: {
-            color: '#2d8cf0'
-          }},
-          data: [120, 132, 101, 134, 90, 230, 210]
-        },
-        {
-          name: '银行/证券',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {normal: {
-            color: '#10A6FF'
-          }},
-          data: [257, 358, 278, 234, 290, 330, 310]
-        },
-        {
-          name: '游戏/视频',
-          type: 'line',
-          stack: '总量',
-          areaStyle: {normal: {
-            color: '#0C17A6'
-          }},
-          data: [379, 268, 354, 269, 310, 478, 358]
-        },
         {
           name: '餐饮/外卖',
           type: 'line',

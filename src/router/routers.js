@@ -179,6 +179,17 @@ export default [
           icon: 'md-bookmarks'
         },
         component: () => import('@/view/personal/diary/create_and_edit.vue')
+      },
+      {
+        path: '/personal/bill/statistics',
+        name: 'statistics',
+        meta: {
+          hideInMenu: true,
+          title: '账单统计',
+          notCache: true,
+          icon: 'md-calculator'
+        },
+        component: () => import('@/view/personal/bill/statistics.vue')
       }
     ]
   },
