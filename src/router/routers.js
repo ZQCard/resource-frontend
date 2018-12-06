@@ -170,6 +170,15 @@ export default [
         component: () => import('@/view/personal/diary/list.vue')
       },
       {
+        path: 'test',
+        name: '模板测试',
+        meta: {
+          icon: 'md-walk',
+          title: '模板测试'
+        },
+        component: () => import('@/view/personal/diary/test.vue')
+      },
+      {
         path: '/personal/diary/create',
         name: 'create_diary',
         meta: {
