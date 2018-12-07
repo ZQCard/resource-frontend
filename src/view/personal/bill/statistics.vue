@@ -50,7 +50,7 @@
                 </i-col>
             </Row>
         </div>
-        <div id="echartContainer" style="width:90%; height:500px"></div>
+        <div id="echartContainer" ref="echartContainer" style="width:90%; height:500px"></div>
         <Spin size="large" fix v-if="spinShow"/>
     </div>
 </template>
@@ -70,14 +70,14 @@ export default {
 
   data () {
     return {
+      myChart: '',
       spinShow: false,
-      inforCardData: [
-        { title: '总收入', icon: 'md-add', count: 1, color: '#2d8cf0' },
-        { title: '总支出', icon: 'md-cart', count: 2, color: '#19be6b' },
-        { title: '理论存额', icon: 'md-book', count: 1, color: '#ff9900' },
-        { title: '实际存额', icon: 'md-briefcase', count: 0, color: '#ed3f14' }
-      ],
-      expand: 0,
+      currentYear: 2018,
+      chartData: {
+        incomeOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 11, 12],
+        expandOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 11, 12]
+      },
+      expand: 10,
       income: 0,
       summaryForm: {
         expand_all: [
@@ -92,6 +92,14 @@ export default {
         ],
         income_month: [
         ]
+      }
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler: function (val) {
+        this.createChart(val)
       }
     }
   },
@@ -113,6 +121,8 @@ export default {
           this.income = res.data.summary[i]
         }
       }
+      Array.prototype.push.apply(this.chartData.expandOfYear, res.data.year_expand)
+      Array.prototype.push.apply(this.chartData.incomeOfYear, res.data.year_income)
     }).catch(err => {
       // 错误处理
       if (err.response.data.message) {
@@ -128,78 +138,97 @@ export default {
       }
     })
   },
+  computed: {
+    inforCardData () {
+      return [
+        { title: '总收入', icon: 'md-add', count: this.income, color: '#2d8cf0' },
+        { title: '总支出', icon: 'md-cart', count: this.expand, color: '#19be6b' },
+        { title: '理论存额', icon: 'md-book', count: this.income - this.expand, color: '#ff9900' },
+        { title: '实际存额', icon: 'md-briefcase', count: 0, color: '#ed3f14' }
+      ]
+    }
+  },
   mounted () {
-    let myChart = echarts.init(document.getElementById('echartContainer'))
-    myChart.setOption({
-      title: {
-        text: '收支统计表',
-        subtext: '2018'
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      legend: {
-        data: ['最高收入', '最高支出']
-      },
-      toolbox: {
-        show: true,
-        feature: {
-          mark: {show: true},
-          magicType: {show: true, type: ['line', 'bar']},
-          saveAsImage: {show: true}
-        }
-      },
-      calculable: true,
-      xAxis: [
-        {
-          type: 'category',
-          boundaryGap: true,
-          data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-          name: '月份'
-        }
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} 元'
-          }
-        }
-      ],
-      series: [
-        {
-          name: '最高收入',
-          type: 'line',
-          data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-          markPoint: {
-            data: [
-              {type: 'max', name: '最大值'},
-              {type: 'min', name: '最小值'}
-            ]
-          },
-          markLine: {
-            data: [
-              {type: 'average', name: '平均值'}
-            ]
+    this.initChart()
+  },
+  methods: {
+    createChart (params) {
+      let options = {
+        title: {
+          text: '收支统计表',
+          subtext: 2018
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['最高收入', '最高支出']
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            mark: {show: true},
+            magicType: {show: true, type: ['line', 'bar']},
+            saveAsImage: {show: true}
           }
         },
-        {
-          name: '最高支出',
-          type: 'line',
-          data: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-          markPoint: {
-            data: [
-              {name: '月最低', value: -2, xAxis: 1, yAxis: -1.5}
-            ]
-          },
-          markLine: {
-            data: [
-              {type: 'average', name: '平均值'}
-            ]
+        calculable: true,
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: true,
+            data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            name: '月份'
           }
-        }
-      ]
-    })
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} 元'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '最高收入',
+            type: 'line',
+            data: params.incomeOfYear,
+            markPoint: {
+              data: [
+                {type: 'max', name: '最大值'},
+                {type: 'min', name: '最小值'}
+              ]
+            },
+            markLine: {
+              data: [
+                {type: 'average', name: '平均值'}
+              ]
+            }
+          },
+          {
+            name: '最高支出',
+            type: 'line',
+            data: params.expandOfYear,
+            markPoint: {
+              data: [
+                {name: '月最低', value: -2, xAxis: 1, yAxis: -1.5}
+              ]
+            },
+            markLine: {
+              data: [
+                {type: 'average', name: '平均值'}
+              ]
+            }
+          }
+        ]
+      }
+      this.myChart.setOption(options)
+    },
+    initChart () {
+      this.myChart = echarts.init(this.$refs['echartContainer'])
+      this.createChart(this.chartData)
+    }
   }
 }
 </script>
