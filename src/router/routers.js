@@ -162,10 +162,10 @@ export default [
       },
       {
         path: 'diary',
-        name: '23333',
+        name: '卡牌',
         meta: {
           icon: 'md-walk',
-          title: '23333'
+          title: '卡牌'
         },
         component: () => import('@/view/personal/diary/list.vue')
       },
