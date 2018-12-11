@@ -104,7 +104,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.photo_url = config.baseUrl.qiniuURL + response.hash
+      this.photo_url = response.url
     },
 
     // 文件超出限制时

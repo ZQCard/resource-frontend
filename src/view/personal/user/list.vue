@@ -202,7 +202,7 @@ export default {
         id: '',
         roles: [
         ],
-        roleHas:[],
+        roleHas: []
       }
     }
   },
@@ -435,7 +435,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.form.avatar = config.baseUrl.qiniuURL + response.hash
+      this.form.avatar = response.url
     },
 
     // 文件超出限制时
@@ -480,27 +480,27 @@ export default {
       params.append('id', this.assignmentForm.id)
       params.append('roles', this.assignmentForm.roleHas)
       postDataForm('assign', params).then(res => {
-          this.$Message.success({
-            content: res.data.message,
-            duration: 3,
-            onClose: function () {
-              window.location.reload()
-            }
-          })
-        }).catch(err => {
-          // 错误处理
-          if (err.response.data.message) {
-            this.$Message.error({
-              content: err.response.data.message,
-              duration: 3
-            })
-          } else {
-            this.$Message.error({
-              content: err.response.data,
-              duration: 3
-            })
+        this.$Message.success({
+          content: res.data.message,
+          duration: 3,
+          onClose: function () {
+            window.location.reload()
           }
         })
+      }).catch(err => {
+        // 错误处理
+        if (err.response.data.message) {
+          this.$Message.error({
+            content: err.response.data.message,
+            duration: 3
+          })
+        } else {
+          this.$Message.error({
+            content: err.response.data,
+            duration: 3
+          })
+        }
+      })
     }
   }
 }

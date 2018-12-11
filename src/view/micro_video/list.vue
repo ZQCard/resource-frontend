@@ -2,7 +2,7 @@
     <div class="micro_video">
         <div><Button type="primary" style="margin-bottom: 20px;" @click="addVideo">添加微视频</Button></div>
         <Row>
-            <Col span="4" v-for="(video, index) in video_list" :key="index">
+            <Col span="6" v-for="(video, index) in video_list" :key="index">
                 <Card>
                     <span @click="deleteVideo(video.url)"><Icon type="md-close" style="float:right;"/></span>
                     <video :src="video.url" controls="controls" width="240" height="320" @play="viewVideo(video.url)"></video>
@@ -99,7 +99,8 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.video_url = config.baseUrl.qiniuURL + response.hash
+      console.log(response)
+      this.video_url = response.url
     },
 
     // 文件超出限制时

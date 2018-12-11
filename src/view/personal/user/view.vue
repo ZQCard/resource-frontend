@@ -110,7 +110,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.userForm.avatar = config.baseUrl.qiniuURL + response.hash
+      this.userForm.avatar = response.url
     },
 
     // 文件超出限制时
