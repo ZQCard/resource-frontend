@@ -435,7 +435,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.form.avatar = response.url
+      this.form.avatar = this.video_url = process.env.NODE_ENV === 'production' ? config.baseUrl.qiniuURL + response.hash : response.url
     },
 
     // 文件超出限制时
@@ -457,8 +457,12 @@ export default {
       this.assignmentForm.id = user.id
       getDataView('assignment', params).then(res => {
         this.assignmentForm.id = user.id
-        this.assignmentForm.roles = res.data.roles
-        this.assignmentForm.roleHas = res.data.userRoles.has
+        if (res.data.roles != null) {
+          this.assignmentForm.roles = res.data.roles
+        }
+        if (res.data.userRoles.has != null) {
+          this.assignmentForm.roleHas = res.data.userRoles.has
+        }
       }).catch(err => {
         // 错误处理
         if (err.response.data.message) {

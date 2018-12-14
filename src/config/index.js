@@ -13,11 +13,12 @@ export default {
    * @description api请求基础路径
    */
   baseUrl: {
-    dev: 'http://api.niu12.com',
+    dev: 'http://127.0.0.1:8888',
     pro: 'http://api.niu12.com',
     qiniuURL: 'http://resource.niu12.com/',
     qiniuUpload: '//up-z0.qiniup.com/'
   },
+
   /**
    * @description 默认打开的首页的路由name值，默认为home
    */

@@ -115,10 +115,12 @@ export default {
       this.spinShow = true
       let params = new URLSearchParams()
       getDataList('auth', params).then(res => {
-        for (var i = 0; i < res.data.roles.length; i++) {
-          var obj = {}
-          obj.role = res.data.roles[i]
-          this.roles.push(obj)
+        if (res.data.roles != null) {
+          for (var i = 0; i < res.data.roles.length; i++) {
+            var obj = {}
+            obj.role = res.data.roles[i]
+            this.roles.push(obj)
+          }
         }
         // 处理路由列表
         this.routesInit = this.processArrayToTrsanfer(res.data.routes)

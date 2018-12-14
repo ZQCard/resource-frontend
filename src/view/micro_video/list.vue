@@ -99,8 +99,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      console.log(response)
-      this.video_url = response.url
+      this.video_url = process.env.NODE_ENV === 'production' ? config.baseUrl.qiniuURL + response.hash : response.url
     },
 
     // 文件超出限制时
