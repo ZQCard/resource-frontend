@@ -52,9 +52,9 @@ export default {
       formShow: false,
       // 分页数据
       totalCount: 0,
-      pageSize: 10,
+      pageSize: 8,
       page: 1,
-      pagesizeopts: [5, 10, 15],
+      pagesizeopts: [4, 8, 12],
       uploadUrl: config.baseUrl.qiniuUpload,
       uploadData: {},
       video_list: []

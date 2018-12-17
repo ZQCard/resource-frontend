@@ -2,7 +2,7 @@
     <div class="photos">
         <div><Button type="primary" style="margin-bottom: 20px;" @click="addPhoto">添加照片</Button></div>
         <Row>
-            <Col span="4" offset="1" v-for="(photo, index) in photo_list" :key="index">
+            <Col span="6" offset="1" v-for="(photo, index) in photo_list" :key="index">
                 <Card style="width:320px">
                     <div style="text-align:center">
                         <img :src="photo.url" width="260" height="300">
@@ -57,9 +57,9 @@ export default {
       formShow: false,
       // 分页数据
       totalCount: 0,
-      pageSize: 10,
+      pageSize: 6,
       page: 1,
-      pagesizeopts: [5, 10, 15],
+      pagesizeopts: [6, 9, 12],
       uploadUrl: config.baseUrl.qiniuUpload,
       uploadData: {},
       photo_list: []
