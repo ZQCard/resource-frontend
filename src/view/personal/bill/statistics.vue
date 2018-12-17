@@ -1,14 +1,25 @@
 <template>
     <div class="statistics">
-        <Row :gutter="20">
-            <i-col :xs="12" :md="8" :lg="4" v-for="(infor, i) in inforCardData" :key="`infor-${i}`" style="height: 120px;padding-bottom: 10px;">
-                <infor-card shadow :color="infor.color" :icon="infor.icon" :icon-size="36">
-                <count-to :end="infor.count" count-class="count-style"/>
-                <p>{{ infor.title }}</p>
-                </infor-card>
-            </i-col>
+          <Row>
+            <Col span="6">
+                <Card>
+                    <p slot="title">总收入</p>
+                    <h1>{{income}}</h1>
+                </Card>
+            </Col>
+            <Col span="6" offset="2">
+                <Card dis-hover>
+                    <p slot="title">总支出</p>
+                    <h1>{{expand}}</h1>
+                </Card>
+            </Col>
+            <Col span="6" offset="2">
+                <Card dis-hover>
+                    <p slot="title">理论存款</p>
+                    <h1>{{income - expand}}</h1>
+                </Card>
+            </Col>
         </Row>
-
         <div>
             <h1>支出统计</h1>
             <Row :gutter="20" style="margin-top: 10px;">
@@ -74,10 +85,10 @@ export default {
       spinShow: false,
       currentYear: 2018,
       chartData: {
-        incomeOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 11, 12],
-        expandOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 11, 12]
+        incomeOfYear: [],
+        expandOfYear: []
       },
-      expand: 10,
+      expand: 0,
       income: 0,
       summaryForm: {
         expand_all: [
@@ -113,16 +124,14 @@ export default {
       this.summaryForm.income_all = res.data.income_all
       this.summaryForm.income_year = res.data.income_year
       this.summaryForm.income_month = res.data.income_month
-
-      for (var i in res.data.summary) {
-        if (i === 0) {
-          this.expand = res.data.summary[i]
-        } else {
-          this.income = res.data.summary[i]
-        }
+      this.expand = res.data.summary[0]
+      this.income = res.data.summary[1]
+      for (let i in res.data.year_expand) {
+        this.chartData.expandOfYear.push(res.data.year_expand[i])
       }
-      Array.prototype.push.apply(this.chartData.expandOfYear, res.data.year_expand)
-      Array.prototype.push.apply(this.chartData.incomeOfYear, res.data.year_income)
+      for (let i in res.data.year_income) {
+        this.chartData.incomeOfYear.push(res.data.year_income[i])
+      }
     }).catch(err => {
       // 错误处理
       if (err.response.data.message) {
@@ -137,16 +146,6 @@ export default {
         })
       }
     })
-  },
-  computed: {
-    inforCardData () {
-      return [
-        { title: '总收入', icon: 'md-add', count: this.income, color: '#2d8cf0' },
-        { title: '总支出', icon: 'md-cart', count: this.expand, color: '#19be6b' },
-        { title: '理论存额', icon: 'md-book', count: this.income - this.expand, color: '#ff9900' },
-        { title: '实际存额', icon: 'md-briefcase', count: 0, color: '#ed3f14' }
-      ]
-    }
   },
   mounted () {
     this.initChart()
