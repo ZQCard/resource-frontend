@@ -110,7 +110,7 @@ export default {
     },
     // 文件上传成功回调
     uploadSuccess (response) {
-      this.userForm.avatar = this.video_url = process.env.NODE_ENV === 'production' ? config.baseUrl.qiniuURL + response.hash : response.url
+      this.userForm.avatar = this.video_url = response.url
     },
 
     // 文件超出限制时
